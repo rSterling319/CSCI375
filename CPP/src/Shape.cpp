@@ -5,7 +5,7 @@ namespace shapes {
 	Shape::Shape(){
 	}
 	
-	double Shape::getArea(){
+	double Shape::getArea() const {
 		return 0;
 	}
 	

@@ -1,0 +1,2 @@
+javac -d classes -s src src/Main.java $(find src -name '*.java')
+
