@@ -1,19 +1,41 @@
 #include <iostream>
+#include <vector>
 
-#include "Shape.h"
-#include "Rectangle.h"
+#include "Cheese.h"
+#include "Spagetti.h"
+#include "Alfredo.h"
+#include "PastaDish.h"
 
-
-int main(int argc, char *argv[]){
-	shapes::Shape *shape = new shapes::Shape();
-	shapes::Rectangle *rectangle = new shapes::Rectangle(3,5);
+int main(int argc, char *argv[])
+{
 	
-	std::cout<< "shape area = "<<shape->getArea() <<std::endl;
-	std::cout<< "rectangle area= "<< rectangle->getArea() <<std::endl;
+	pastas::PastaDish *pasta = new pastas::PastaDish();
+	pastas::Spagetti *spagetti = new pastas::PastaDish("Meatballs");
 	
-	delete shape;
-	delete rectangle;
+	cheeses::Cheese *parm = new cheeses::Cheese("Parmesean");
+	
+	std::cout<<"Parmesean = " <<*parm <<std::endl;
+	
+	std::vector <pastas::PastaDish*> pastaVec;
+	pastaVec.push_back(new pastas::Spagetti("Marinara");
+	pastaVec.push_back(new pastas::Alfredo("Shrimp");
+	pastaVec.push_back(new pastas::PastaDish();
+	
+	for (auto dish : pastaVec) {
+		std::cout<<"Item: " <<dish->getDish() <<std::endl;
+	}
+	
+	for (auto dish : pastaVec)
+	{
+		delete dish;
+	}
+	
+	std::cout<<"Pasta dish: "<< pasta->getDish()<<std::endl;
+	
+	std::cout<<"Spagetti: "<<spagetti->getDish()<<std::endl;
+	
+	delete pasta;
+	delete spagetti;
 	
 	return 0;
-	
 }
