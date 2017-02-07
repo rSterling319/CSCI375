@@ -2,4 +2,6 @@ Richard Sterling
 GitHub link
 CSCI 375: Object Oriented Programing
 
+View README.md for specific homework assignments.
+
 https://github.com/rSterling319/CSCI375
