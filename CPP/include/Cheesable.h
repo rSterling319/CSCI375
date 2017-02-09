@@ -4,8 +4,8 @@
 
 namespace cheeses {
 	struct Cheesable {
-		virtual Cheese getCheese() const = "none";
-		virtual void setCheese(const Cheese &value) ="none";
+		virtual Cheese getCheese() const = 0;
+		virtual void setCheese(const Cheese &value) = 0;
 		virtual ~Cheesable();
 	};
 }

@@ -7,6 +7,7 @@
 namespace cheeses {
 
 	class Cheese {
+	private: std::string cheese;
 	public: std::string asiago;
 	public: std::string parmesean;
 	public: std::string mozzerela;

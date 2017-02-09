@@ -7,6 +7,7 @@ namespace pastas
 {
 	class Alfredo : public PastaDish, public cheeses::Cheesable {
 	private: std::string _addOn;
+	private: std::string _dish;
 
 	private: cheeses::Cheese _cheese;
 	public: cheeses::Cheese getCheese() const {return _cheese;}

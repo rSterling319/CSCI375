@@ -2,16 +2,16 @@
 
 namespace cheeses {
 	Cheese::Cheese(std::string _cheeseType)
-	:cheese(_cheeseType)
+		: cheese(_cheeseType)
 	{
 	}
 	
-	void Color::print(std::ostream &out) const {
+	void Cheese::print(std::ostream &out) const {
 		out<< "(" << cheese<<")";
 	}
 	
-	std::ostream& operator<< (std::ostream &out, const Cheese &color) {
-		cheese.print(out)
+	std::ostream& operator<< (std::ostream &out, const Cheese &cheese) {
+		cheese.print(out);
 		return out;
 	}
 }

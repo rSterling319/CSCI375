@@ -1,14 +1,12 @@
 #include "Spagetti.h"
 
 namespace pastas {
-	Spagetti::Spagetti(const string &addOn)
-	
-		: _addOn(addon), _cheese("parmesean")
+	Spagetti::Spagetti(const std::string &addOn)
+		: _addOn(addOn), _dish("Spagetti"), _cheese("parmesean")	
 	{
-		
 	}
 	
-	std::string Spagetti::getAddOn const {
+	std::string Spagetti::getAddOn() const {
 		return _addOn;
 	}
 	
@@ -20,7 +18,7 @@ namespace pastas {
 	}
 	
 	void Spagetti::updateDish() {
-		_dish = "Spagetti with ".append(_addOn);
+		_dish = "Spagetti with " + _addOn;
 	}
 	
 	std::string Spagetti::getDish() const {

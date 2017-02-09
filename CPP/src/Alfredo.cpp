@@ -1,16 +1,16 @@
 #include "Alfredo.h"
 
 namespace pastas {
-	Alfredo::Alfredo(const string &addOn)
+	Alfredo::Alfredo(const std::string &addOn)
+		:_addOn(addOn),_dish("Alfredo"), _cheese("Asiago")
 	{
-		:_addOn(addOn), _cheese("Asiago")
 	}
 	
-	string Alfredo::getAddOn const {
+	std::string Alfredo::getAddOn() const {
 		return _addOn;
 	}
 	
-	void Alfredo::setAddOn(const string &value) {
+	void Alfredo::setAddOn(const std::string &value) {
 		if(_addOn != value) {
 			_addOn = value;
 			updateDish();
@@ -21,7 +21,7 @@ namespace pastas {
 		_dish = _addOn.append(" Alfredo");
 	}
 	
-	string Spagetti::getDish() const {
+	std::string Alfredo::getDish() const {
 		return _dish;
 	}
 }
