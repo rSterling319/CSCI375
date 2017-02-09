@@ -1,7 +1,7 @@
 #include "Cheese.h"
 
 namespace cheeses {
-	Cheese::Cheese(string _cheeseType)
+	Cheese::Cheese(std::string _cheeseType)
 	:cheese(_cheeseType)
 	{
 	}

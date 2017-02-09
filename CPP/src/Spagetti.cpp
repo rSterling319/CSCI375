@@ -2,16 +2,17 @@
 
 namespace pastas {
 	Spagetti::Spagetti(const string &addOn)
+	
+		: _addOn(addon), _cheese("parmesean")
 	{
-		:_addOn(addon), _cheese("parmesean")
 		
 	}
 	
-	string Spagetti::getAddOn const {
+	std::string Spagetti::getAddOn const {
 		return _addOn;
 	}
 	
-	void Spagetti::setAddOn(const string &value) {
+	void Spagetti::setAddOn(const std::string &value) {
 		if(_addOn != value){
 			_addOn = value;
 			updateDish();
@@ -22,7 +23,7 @@ namespace pastas {
 		_dish = "Spagetti with ".append(_addOn);
 	}
 	
-	string Spagetti::getDish() const {
+	std::string Spagetti::getDish() const {
 		return _dish;
 	}
 }

@@ -7,13 +7,13 @@
 namespace cheeses {
 
 	class Cheese {
-	public: string asiago;
-	public: string parmesean;
-	public: string mozzerela;
-	public: Cheese(string _cheeseType = "none");
+	public: std::string asiago;
+	public: std::string parmesean;
+	public: std::string mozzerela;
+	public: Cheese(std::string _cheeseType = "none");
 
 	public: virtual void print(std::ostream &out) const;
 	};
 
-	std::ostream& operator<< (sted::ostream &out, const Cheese &cheese);
+	std::ostream& operator<< (std::ostream &out, const Cheese &cheese);
 }

@@ -5,7 +5,7 @@ namespace pastas {
 	PastaDish::PastaDish() {
 	}
 	
-	string PastaDish::getDish const{
+	std::string PastaDish::getDish() const{
 		return "None";
 	}
 	
