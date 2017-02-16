@@ -34,8 +34,7 @@ int main(int argc, char *argv[])
 	}
 	
 	std::cout<<"Pasta dish: "<< pasta->getDish()<<std::endl;
-	
-	std::cout<<"Spagetti: "<<spagetti->getDish()<<spagetti->getCheese()<<std::endl;
+	std::cout<<"Spagetti: "<<spagetti->getDish()<< " wiht "<<spagetti->getAddOn()<<spagetti->getCheese()<<std::endl;
 	
 	delete pasta;
 	delete spagetti;

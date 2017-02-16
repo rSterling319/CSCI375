@@ -18,7 +18,7 @@ namespace pastas
 	public: std::string getAddOn() const;
 	public: void setAddOn(const std::string &value);
 
-	public: std::string getDish() const;
+	public: std::string getDish()const;
 
 	private: void updateDish();
 	

@@ -17,7 +17,7 @@ namespace pastas {
 		}
 	}
 	
-	void Spagetti::updateDish() {
+	void Spagetti::updateDish(){
 		_dish = "Spagetti with " + _addOn;
 	}
 	
