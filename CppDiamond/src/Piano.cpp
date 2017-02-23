@@ -19,4 +19,6 @@ namespace instruments {
             _instType = value;
         }
     }
+
+    Piano::~Piano(){}
 }

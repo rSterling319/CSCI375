@@ -12,8 +12,8 @@ namespace power {
         private: int _volts;
 
         private: instruments::Type::classification _instType;
-        public: instruments::Type::classification getType() const {return _instType; }
-        public: void setType(const instruments::Type::classification &value) {_instType=value; }
+        public: instruments::Type::classification getType() const;
+        public: void setType(const instruments::Type::classification &value);
         //Woodwind=1, Brass=2, Percussion=3, String=4
         public: Guitar(owns::Own &own, const int &resistence, const int &current);
 

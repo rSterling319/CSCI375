@@ -39,4 +39,6 @@ namespace power {
     void Toaster::updateVolts(){
         _volts = _current * _resistance;
     }
+
+    Toaster::~Toaster(){}
 }

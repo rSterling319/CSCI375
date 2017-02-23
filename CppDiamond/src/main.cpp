@@ -23,9 +23,9 @@ int main(int argc, char *argv[]){
     std::cout<<"New Piano"<<std::endl;
     instruments::Piano *piano = new instruments::Piano(*own);
 
-   // instruments::Type *stringed = new instruments::Type(4);
+   instruments::Type *stringed = new instruments::Type(static_cast<instruments::Type::classification>(4));
 
-    //std::cout<<"Stringed = "<<*stringed<<std::endl;
+    std::cout<<"Stringed = "<<*stringed<<std::endl;
 
     std::vector < power::Powered* > powered;
     powered.push_back(new power::Powered(*own)),
@@ -37,12 +37,12 @@ int main(int argc, char *argv[]){
     }
 
     std::cout<<"guitar voltage = "<<guitar->getVoltage()<<std::endl;
-    //guitar->setType(4);
-    //std::cout<<"Guitar is a "<<guitar->getType()<<" instrument"<<std::endl;
+    guitar->setType(static_cast<instruments::Type::classification>(4));
+    std::cout<<"Guitar is a "<<guitar->getType()<<" instrument"<<std::endl;
 
     std::cout<<"Toaster voltage = "<<toaster->getVoltage()<<std::endl;
 
-    //std::cout<<"Piano is a "<<piano->getType()<<" instrument"<<std::endl;
+    std::cout<<"Piano is a "<<piano->getType()<<" instrument"<<std::endl;
 
     delete own;
 

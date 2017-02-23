@@ -12,17 +12,16 @@ namespace power {
     _instType(static_cast<instruments::Type::classification>(4))
     {
     }
-/*
     instruments::Type::classification Guitar::getType() const {
-        return _type;
+        return _instType;
     }
 
     void Guitar::setType(const instruments::Type::classification &value) {
-        if (_type != value) {
-            _type = value;
+        if (_instType != value) {
+            _instType = value;
         }
     }
-    */
+
     int Guitar::getResistance() const {
         return _resistance;
     }
@@ -51,5 +50,7 @@ namespace power {
     void Guitar::updateVolts(){
         _volts = _current * _resistance;
     }
+
+    Guitar::~Guitar(){}
 
 }
