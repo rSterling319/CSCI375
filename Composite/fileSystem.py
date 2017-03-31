@@ -30,20 +30,25 @@ class Component:
 
 
     def Add(self, item, destination):
-        item = eval(item)
-        if type(item) == Folder:
-            item.name = item.name.upper()
         try:
-            if destination == self.name:
-                self.children[item.name]=item
-            elif destination in self.children.keys():
-                self.children[destination].children[item.name]=item
-            else:
-                for f in self.children.values():
-                    if type(f) == Folder:
-                        f.Add(item, destination)
-        except AttributeError:
-            print("Files can't inherit other Files/Folders")
+            item = eval(item)
+            if type(item) == Folder:
+                item.name = item.name.upper()
+            try:
+                if destination == self.name:
+                    self.children[item.name]=item
+                elif destination in self.children.keys():
+                    self.children[destination].children[item.name]=item
+                else:
+                    for f in self.children.values():
+                        if type(f) == Folder:
+                            f.Add(item, destination)
+            except AttributeError:
+                print("Files can't inherit other Files/Folders")
+                input("Press enter to continue...")
+        except:
+            print("Could not add %s" %item)
+            input("Press enter to continue...")
 
     def Delete(self, name):
         if name in self.children.keys():
@@ -105,6 +110,8 @@ quit = False
 def Quit():
     global quit
     quit = True
+
+os.system('clear')
 printMenu()
 folder = Folder(input('Input name of starting Folder: ').upper())
 commands = {'Copy': folder.Copy, 'Delete': folder.Delete, 'Add': folder.Add, 'Rename': folder.Rename, 'Quit': Quit }
@@ -113,7 +120,7 @@ while not quit:
     os.system('clear')
     printMenu()
     printFileSystem(folder)
-    command = input('Enter command: ')
+    command = input('\nEnter command: ')
     command = command.split()
     if len(command) == 2:
         commands[command[0]](command[1])
@@ -121,3 +128,5 @@ while not quit:
         commands[command[0]](command[1], command[2])
     else:
         commands[command[0]]()
+
+os.system('clear')
