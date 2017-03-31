@@ -99,12 +99,13 @@ def printFileSystem(item, lev=0, all=True):
                 print('-' + f.name + ' --> ' + str(type(f).__name__))
 
 def printMenu():
-    print(' '*25 + 'Mock File Tree')
-    print('*'*64)
-    print(' '*26 + '* Commands *')
+    print(' '*31 + 'Mock File Tree')
+    print('*'*76)
+    print(' '*32 + '* Commands *')
     print('   Add: Add Type("Name") Destination    |    Copy: Copy Name')
-    print('   Delete: Delete Name               |    Rename: Rename Name New_Name')
-    print('*'*64)
+    print('   Delete: Delete Name                  |    Rename: Rename Name New_Name')
+    print('   Quit: Quit')
+    print('*'*76)
 
 
 quit = False
@@ -117,7 +118,6 @@ os.system('clear')
 printMenu()
 folder = Folder(input('Input name of starting Folder: ').upper())
 commands = {'Copy': folder.Copy, 'Delete': folder.Delete, 'Add': folder.Add, 'Rename': folder.Rename, 'Quit': Quit }
-#FIXME rename not working!
 while not quit:
     os.system('clear')
     printMenu()
