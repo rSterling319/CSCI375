@@ -30,8 +30,10 @@ class Component:
 
 
     def Add(self, item, destination):
+        print(str(type(item)))
         try:
-            item = eval(item)
+            if isinstance(item, str):
+                item = eval(item)
             if type(item) == Folder:
                 item.name = item.name.upper()
             try:
