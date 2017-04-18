@@ -178,6 +178,7 @@ class AddPage(tk.Frame):
             lb_recipe.delete(0, 'end')
             lb_recipe.insert('end', current_recipe.name)
             lb_recipe.insert('end', len(current_recipe.name)*'+')
+            lb_recipe.insert('end', current_recipe.type)
             lb_recipe.insert('end', ' ')
             lb_recipe.insert('end','Ingredients')
             lb_recipe.insert('end', '='*20)
@@ -188,13 +189,38 @@ class AddPage(tk.Frame):
             lb_recipe.insert('end', '='*20)
             i=1
             for direction in current_recipe.directions:
-                lb_recipe.insert('end', i +') '+ direction)
+                lb_recipe.insert('end', str(i) +') '+ str(direction))
                 i+=1
 
         def addIngredient(current_recipe):
-            current_recipe.add_Ingredient(Ingredient(self.en_ingredient_name.get(), self.en_amount.get(), self.addMeasure.get()))
-            updateRecipe(current_recipe)
+            #if the entry boxes aren't empty
+            if len(self.en_ingredient_name.get()) !=0 and len(self.en_amount.get())!=0:
+                current_recipe.add_Ingredient(Ingredient(self.en_ingredient_name.get(), self.en_amount.get(), self.addMeasure.get()))
+                updateRecipe(current_recipe)
+                self.en_ingredient_name.delete(0,'end')
+                self.en_amount.delete(0,'end')
+                self.addMeasure.set('Misc.')
+            #otherwise show an error message
+            else:
+                if len(self.en_ingredient_name.get()) ==0 and len(self.en_amount.get())==0:
+                    messagebox.showwarning("Error", "Please enter an amount and an ingredient")
+                elif len(self.en_ingredient_name.get()) ==0:
+                    messagebox.showwarning("Error", "Please enter an ingredient")
+                elif len(self.en_amount.get()) ==0:
+                    messagebox.showwarning("Error", "Please enter an amount")
+
         def addDirection(current_recipe):
+            current_recipe.add_Direction(Direction(self.txt_add_direction.get('1.0','end')))
+            updateRecipe(current_recipe)
+
+        def add_to_recipebook(current_recipe):
+            pass
+
+        def print_recipe(current_recipe):
+            pass
+
+        def add_and_close(current_recipe):
+            self.pop_recipe.destroy()
             pass
 
 
@@ -204,14 +230,22 @@ class AddPage(tk.Frame):
             current_recipe = Recipe(self.en_name.get(), self.addRecipe.get())
             #remove create recipe button
             self.btn_Create_Recipe.grid_remove()
+
             #Bring up pop up
-            pop_recipe = tk.Toplevel()
-            pop_recipe.title(self.en_name.get())
-            pop_recipe.geometry("500x600+860+50")
-            lb_recipe = tk.Listbox(pop_recipe)
-            lb_recipe.config(height=34, width=70)
-            lb_recipe.grid(row=14, column=0, columnspan=4, padx=5, pady=(10,5))
+            self.pop_recipe = tk.Toplevel()
+            self.pop_recipe.title(self.en_name.get())
+            self.pop_recipe.geometry("500x600+860+50")
+            lb_recipe = tk.Listbox(self.pop_recipe)
+            lb_recipe.config(height=32, width=70)
+            lb_recipe.grid(row=0, column=0, columnspan=4, padx=5, pady=(10,5))
+            bt_pop_add = tk.Button(self.pop_recipe, text ='Add this recipe to '+ str(currentbook.name), command = lambda: add_to_recipebook(current_recipe))
+            bt_pop_add.grid(row=15, column = 1)
+            bt_pop_print = tk.Button(self.pop_recipe, text = 'Print this recipe', command = lambda: print_recipe(current_recipe))
+            bt_pop_print.grid(row=15, column =2)
+            bt_pop_close_topLevel = tk.Button(self.pop_recipe, text='add and close this box', command= lambda: add_and_close(current_recipe))
+            bt_pop_close_topLevel.grid(row=15, column =3)
             updateRecipe(current_recipe)
+
             #Bring up add recipe stuffs
             #add ingredients labels
             self.lbl_ingredient = tk.Label(self, text="Add Ingredient")
@@ -242,7 +276,7 @@ class AddPage(tk.Frame):
             self.lbl_add_direction.grid(row=11, column=1, columnspan=2, pady=(20, 10))
             self.txt_add_direction = tk.Text(self, height=4, width = 50, bd=4, bg='#e3eaf4')
             self.txt_add_direction.grid(row=12, column=0, columnspan=4)
-            self.bt_add_direction=tk.Button(self, text='Add this Direction')
+            self.bt_add_direction=tk.Button(self, text='Add this Direction', command= lambda: addDirection(current_recipe))
             self.bt_add_direction.grid(row=13, column=1, columnspan=2)
         else:
             messagebox.showwarning("Error", "Please enter a recipe name")
