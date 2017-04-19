@@ -1,7 +1,8 @@
 Salsa
 +++++
 Appetizer
-Servings: 4 
+Servings: 4
+ 
 Ingredients
 ====================
 1 Each Onion

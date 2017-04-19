@@ -177,32 +177,38 @@ class Contents(tk.Frame):
             pass
 
     def print_recipe(self, current_recipe):
-        print(current_recipe)
-        filename='recipes/'+ currentbook.name +'/'+current_recipe.name +'.txt'
+        filename='recipes/'+ currentbook.name +'/'+TYPE_DICT[current_recipe.type]+'/'+current_recipe.name +'.txt'
+        #try to open the file
         try:
-            call(['open', filename])
-
-        except FileNotFoundError:
             writeOut = open(filename,'w')
-            writeOut.write(current_recipe.name+'\n')
-            writeOut.write(len(current_recipe.name)*'+'+'\n')
-            writeOut.write(current_recipe.type+'\n')
-            writeOut.write('Servings: '+current_recipe.servings)
-            writeOut.write(' '+'\n')
-            writeOut.write('Ingredients'+'\n')
-            writeOut.write('='*20+'\n')
-            for ingredient in current_recipe.ingredients.values():
-                writeOut.write(str(ingredient)+'\n')
-            writeOut.write(' '+'\n')
-            writeOut.write('Directions'+'\n')
-            writeOut.write('='*20+'\n')
-            i=1
-            for direction in self.current_recipe.directions:
-                writeOut.write(str(i) +') '+ str(direction)+'\n')
-                i+=1
-            writeOut.close()
+        #create new File Structure
+        except FileNotFoundError:
+            call(['mkdir', 'recipes/'+currentbook.name])
+            call(['mkdir', 'recipes/'+currentbook.name+'/appetizers/'])
+            call(['mkdir', 'recipes/'+currentbook.name+'/entrees/'])
+            call(['mkdir', 'recipes/'+currentbook.name+'/desserts/'])
+            call(['mkdir', 'recipes/'+currentbook.name+'/misc/'])
+            writeOut = open(filename,'w')
 
-            call(['open', filename])
+        writeOut.write(current_recipe.name+'\n')
+        writeOut.write(len(current_recipe.name)*'+'+'\n')
+        writeOut.write(current_recipe.type+'\n')
+        writeOut.write('Servings: '+current_recipe.servings+'\n')
+        writeOut.write(' '+'\n')
+        writeOut.write('Ingredients'+'\n')
+        writeOut.write('='*20+'\n')
+        for ingredient in current_recipe.ingredients.values():
+            writeOut.write(str(ingredient)+'\n')
+        writeOut.write(' '+'\n')
+        writeOut.write('Directions'+'\n')
+        writeOut.write('='*20+'\n')
+        i=1
+        for direction in current_recipe.directions:
+            writeOut.write(str(i) +') '+ str(direction)+'\n')
+            i+=1
+        writeOut.close()
+
+        call(['open', filename])
 
 
 class AddPage(tk.Frame):
@@ -333,7 +339,7 @@ class AddPage(tk.Frame):
                 writeOut.write(current_recipe.name+'\n')
                 writeOut.write(len(current_recipe.name)*'+'+'\n')
                 writeOut.write(current_recipe.type+'\n')
-                writeOut.write('Servings: '+current_recipe.servings)
+                writeOut.write('Servings: '+current_recipe.servings+'\n')
                 writeOut.write(' '+'\n')
                 writeOut.write('Ingredients'+'\n')
                 writeOut.write('='*20+'\n')
