@@ -4,6 +4,8 @@ from tkinter.ttk import *
 from subprocess import call
 from include.RecipeBook import *
 import pickle
+import requests
+from bs4 import BeautifulSoup
 
 TITLE_FONT = ("Courier New", 18, "bold")
 OTHER_FONT = ('Courier New', 12)
@@ -159,10 +161,14 @@ class Contents(tk.Frame):
         self.lb_section.grid(row=3, column=0, columnspan=4, padx = 20)
 
         #calls AddPage
-        self.bt_add = tk.Button(self, text ='Add a Recipe', font = OTHER_FONT, command = lambda: controller.show_frame("AddPage"))
-        self.bt_add.grid(row=4, column =1, columnspan= 2)
         self.bt_print = tk.Button(self, text='Print selected Recipe', font= OTHER_FONT, command = lambda: self.print_recipe(currentbook.book[self.category][self.lb_section.get('active')]))
+        self.bt_add = tk.Button(self, text ='Add a Recipe', font = OTHER_FONT, command = lambda: controller.show_frame("AddPage"))
+        self.bt_add_by_url = tk.Button(self, text='Add a Recipe by Url link', font = OTHER_FONT, command = lambda: self.add_by_url())
         self.bt_print.grid(row=4, column = 0)
+        self.bt_add.grid(row=4, column =1, columnspan= 2)
+        self.bt_add_by_url.grid(row=4, column =3)
+
+
 
     def update_listbox(self, *category):
         self.lb_section.delete(0, 'end')
@@ -209,6 +215,38 @@ class Contents(tk.Frame):
         writeOut.close()
 
         call(['open', filename])
+
+    def add_by_url(self):
+        #bring up pop up
+        self.pop_url_add = tk.Toplevel()
+        self.pop_url_add.title('Add Recipe by Url')
+        self.pop_url_add.geometry("500x600+860+50")
+
+        lbl_addUrl = tk.Label(self.pop_url_add, text ="Paste Url:", font=OTHER_FONT)
+        lbl_addUrl.grid(row=0, column=0)
+        self.en_addUrl = tk.Entry(self.pop_url_add, font=OTHER_FONT, width = 55)
+        self.en_addUrl.grid(row=0, column=1)
+        bt_getUrl = tk.Button(self.pop_url_add, text = 'Get Recipe', command = lambda: self.scrapeRecipe(self.en_addUrl.get()))
+        bt_getUrl.grid(row=1, column=0)
+    def scrapeRecipe(self, recipeUrl):
+        url = recipeUrl
+        getPage = requests.get(url)
+        soup = BeautifulSoup(getPage.text, "html.parser")
+        title = soup.title.text[0:soup.title.text.index(' - All')]
+        servings = soup.find('meta', {"itemprop":"recipeYield"})['content']
+        ingredients =[]
+        directions = []
+        for ing in soup.findAll('span', itemprop = "ingredients"):
+            ingredients.append(ing.string)
+        for dirc in soup.findAll('span', {"class" : "recipe-directions__list--item"}):
+            directions.append(dirc.string)
+        print(title)
+        print(servings)
+        print(ingredients[0])
+        print(directions[0])
+        #FIXME turn this shit into objects fool
+
+
 
 
 class AddPage(tk.Frame):
