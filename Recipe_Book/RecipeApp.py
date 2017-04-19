@@ -210,7 +210,7 @@ class Contents(tk.Frame):
         writeOut.write('='*20+'\n')
         i=1
         for direction in current_recipe.directions:
-            writeOut.write(str(i) +') '+ str(direction)+'\n')
+            writeOut.write(str(i) +') '+ str(direction)+'\n\n')
             i+=1
         writeOut.close()
 
@@ -221,15 +221,30 @@ class Contents(tk.Frame):
         self.pop_url_add = tk.Toplevel()
         self.pop_url_add.title('Add Recipe by Url')
         self.pop_url_add.geometry("500x600+860+50")
-
+        #buttons/entries/labels
         lbl_addUrl = tk.Label(self.pop_url_add, text ="Paste Url:", font=OTHER_FONT)
-        lbl_addUrl.grid(row=0, column=0)
-        self.en_addUrl = tk.Entry(self.pop_url_add, font=OTHER_FONT, width = 55)
-        self.en_addUrl.grid(row=0, column=1)
+        self.en_addUrl = tk.Entry(self.pop_url_add, font=OTHER_FONT, width = 50)
         bt_getUrl = tk.Button(self.pop_url_add, text = 'Get Recipe', command = lambda: self.scrapeRecipe(self.en_addUrl.get()))
-        bt_getUrl.grid(row=1, column=0)
+        self.typeVar = tk.StringVar(self)
+        self.typeVar.set("Misc.") #initialvalue
+        drp_type = tk.OptionMenu(self.pop_url_add, self.typeVar,"Appetizer", "Entree", "Dessert", "Misc.")
+        drp_type.config(font = OTHER_FONT)
+        drp_type['menu'].config(font = OTHER_FONT)
+        lbl_type = tk.Label(self.pop_url_add, text = "This recipe is a:", font=OTHER_FONT)
+        #Grid
+        lbl_addUrl.grid(row=0, column=0)
+        self.en_addUrl.grid(row=0, column=1, columnspan=2, padx=(0,5))
+        lbl_type.grid(row=1, column=0)
+        drp_type.grid(row =1, column = 1)
+        bt_getUrl.grid(row=1, column=2)
+
+        #listbox
+        self.lb_recipe = tk.Listbox(self.pop_url_add)
+        self.lb_recipe.config(height=35, width=70, font = OTHER_FONT)
+        self.lb_recipe.grid(row=2, column=0, columnspan=3, padx=5, pady=(10,5))
 
     def scrapeRecipe(self, recipeUrl):
+        global currentbook
         url = recipeUrl
         getPage = requests.get(url)
         soup = BeautifulSoup(getPage.text, "html.parser")
@@ -241,11 +256,59 @@ class Contents(tk.Frame):
             ingredients.append(ing.string)
         for dirc in soup.findAll('span', {"class" : "recipe-directions__list--item"}):
             directions.append(dirc.string)
-        print(title)
-        print(servings)
-        print(ingredients[0])
-        print(directions[0])
-        #FIXME turn this shit into objects fool
+        directions = filter(None, directions)
+        print(directions)
+        #Create new Recipe
+        current_recipe=Recipe(title, self.typeVar.get(), servings)
+        #add Ingredients
+        for ingredient in ingredients:
+            ing =self.ingredient_a_fy(ingredient)
+            current_recipe.add_Ingredient(Ingredient(ing[0],ing[1],ing[2]))
+        #add directions
+        for direction in directions:
+            current_recipe.add_Direction(Direction(direction))
+        #populate listbox with results
+        self.lb_recipe.delete(0, 'end')
+        self.lb_recipe.insert('end', current_recipe.name)
+        self.lb_recipe.insert('end', len(current_recipe.name)*'+')
+        self.lb_recipe.insert('end', current_recipe.type)
+        self.lb_recipe.insert('end', 'Servings: '+ current_recipe.servings)
+        self.lb_recipe.insert('end', ' ')
+        self.lb_recipe.insert('end','Ingredients')
+        self.lb_recipe.insert('end', '='*20)
+        for ingredient in current_recipe.ingredients.values():
+            self.lb_recipe.insert('end', ingredient)
+        self.lb_recipe.insert('end', ' ')
+        self.lb_recipe.insert('end', 'Directions')
+        self.lb_recipe.insert('end', '='*20)
+        i=1
+        for direction in current_recipe.directions:
+            self.lb_recipe.insert('end', str(i) +') '+ str(direction))
+            i+=1
+
+        print(currentbook)
+        currentbook.book[TYPE_DICT[current_recipe.type]][current_recipe.name]=current_recipe
+
+
+    def ingredient_a_fy(self, ingredient):
+        measures = ('Each','teaspoon','Tablespoon', 'Cup', 'Quart', 'Gallon', 'Ounce', 'pound', 'To Taste', 'Dash')
+        ingredients = ingredient.split()
+        amount = ingredients[0]
+        found = False
+        for x in measures:
+            if ingredient.lower().find(x.lower())>=0:
+                measure = x
+                ingredients = str.join(' ', ingredients[2:])
+                found = True
+                break
+        if not found:
+            measure = ''
+            ingredients = str.join(' ', ingredients[1:])
+
+        return ingredients, amount, measure
+
+
+
 
 
 
@@ -385,7 +448,7 @@ class AddPage(tk.Frame):
                 writeOut.write('='*20+'\n')
                 i=1
                 for direction in self.current_recipe.directions:
-                    writeOut.write(str(i) +') '+ str(direction)+'\n')
+                    writeOut.write(str(i) +') '+ str(direction)+'\n\n')
                     i+=1
                 writeOut.close()
 
