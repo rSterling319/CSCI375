@@ -228,6 +228,7 @@ class Contents(tk.Frame):
         self.en_addUrl.grid(row=0, column=1)
         bt_getUrl = tk.Button(self.pop_url_add, text = 'Get Recipe', command = lambda: self.scrapeRecipe(self.en_addUrl.get()))
         bt_getUrl.grid(row=1, column=0)
+
     def scrapeRecipe(self, recipeUrl):
         url = recipeUrl
         getPage = requests.get(url)
@@ -355,10 +356,6 @@ class AddPage(tk.Frame):
                 else:
                     essagebox.showwarning("Error", "Please enter a Direction")
 
-            # def add_to_recipebook(current_recipe):
-            #     currentbook.book[TYPE_DICT[self.current_recipe.type]][self.current_recipe.name]=self.current_recipe
-            #     self.current_recipe = None
-            #     self.addNewRecipe()
 
             def print_recipe(current_recipe):
                 filename='recipes/'+ currentbook.name +'/'+TYPE_DICT[current_recipe.type]+'/'+current_recipe.name +'.txt'
@@ -420,7 +417,6 @@ class AddPage(tk.Frame):
                 bt_pop_close_topLevel = tk.Button(self.pop_recipe, text='add and close this box', font = OTHER_FONT, command= lambda: add_and_close(self.current_recipe))
                 bt_pop_print.grid(row=15, column =1)
                 bt_pop_close_topLevel.grid(row=15, column =2)
-                #updateRecipe(self.current_recipe)
 
                 #Bring up add recipe stuffs
                 #add ingredients labels
