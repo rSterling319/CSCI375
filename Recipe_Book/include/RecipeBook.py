@@ -13,9 +13,10 @@ class RecipeBook:
 
 
 class Recipe(RecipeBook):
-    def __init__(self, name, rec_type='misc'):
+    def __init__(self, name, rec_type='misc', servings=4):
         self.name = name
         self.type = rec_type
+        self.servings=servings
         self.ingredients = {}
         self.directions = []
 

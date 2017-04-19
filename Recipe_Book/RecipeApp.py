@@ -1,15 +1,27 @@
 import tkinter as tk   # python3
 from tkinter import messagebox
 from tkinter.ttk import *
-
+from subprocess import call
 from include.RecipeBook import *
+import pickle
 
 TITLE_FONT = ("Courier New", 18, "bold")
 OTHER_FONT = ('Courier New', 12)
 #type dictionary to Switch recipe type to Recipebook Dict Keys
 TYPE_DICT = {'Appetizer':'appetizers', 'Entree': 'entrees','Dessert':'desserts', 'Misc.':'misc'}
-recipebooks =[]
+
+FILE_NAME = 'RecipeBookShelf'
+#load recipebooks
+try:
+    inFile = open(FILE_NAME,'rb')
+    recipebooks = pickle.load(inFile)
+    inFile.close()
+except FileNotFoundError:
+    recipebooks =[]
+
 currentbook = None
+
+
 
 class App(tk.Tk):
 
@@ -38,14 +50,25 @@ class App(tk.Tk):
             frame.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame("StartPage")
+
+        btn_save =tk.Button(self, text='Save', command = lambda: self.saveRecipeBooks(), font=OTHER_FONT)
         btn_exit = tk.Button(self, text = "Exit", fg = "black", bg = "white", command = exit, font=OTHER_FONT)
+        btn_save.pack()
         btn_exit.pack()
+
 
     def show_frame(self, page_name):
         '''Show a frame for the given page name'''
         frame = self.frames[page_name]
         frame.update_listbox()
         frame.tkraise()
+
+    def saveRecipeBooks(self):
+        global recipebooks
+        print(recipebooks)
+        outFile = open(FILE_NAME, 'wb')
+        pickle.dump(recipebooks, outFile)
+        outFile.close()
 
 
 class StartPage(tk.Frame):
@@ -115,6 +138,7 @@ class Contents(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
+        self.category=''
         self.label = tk.Label(self, text='Recipes', font=TITLE_FONT)
         self.label.grid(row = 0, column = 1, columnspan=2)
         button = tk.Button(self, text="Go to the select a Book page",  font = OTHER_FONT, command=lambda: controller.show_frame("StartPage"))
@@ -137,24 +161,55 @@ class Contents(tk.Frame):
         #calls AddPage
         self.bt_add = tk.Button(self, text ='Add a Recipe', font = OTHER_FONT, command = lambda: controller.show_frame("AddPage"))
         self.bt_add.grid(row=4, column =1, columnspan= 2)
+        self.bt_print = tk.Button(self, text='Print selected Recipe', font= OTHER_FONT, command = lambda: self.print_recipe(currentbook.book[self.category][self.lb_section.get('active')]))
+        self.bt_print.grid(row=4, column = 0)
 
     def update_listbox(self, *category):
         self.lb_section.delete(0, 'end')
         global currentbook
         if(category):
             category = category[0]
+            self.category=category
             if(currentbook.book[category]):
                 for item in currentbook.book[category]:
                     self.lb_section.insert('end', item)
         else:
             pass
 
+    def print_recipe(self, current_recipe):
+        print(current_recipe)
+        filename='recipes/'+ currentbook.name +'/'+current_recipe.name +'.txt'
+        try:
+            call(['open', filename])
+
+        except FileNotFoundError:
+            writeOut = open(filename,'w')
+            writeOut.write(current_recipe.name+'\n')
+            writeOut.write(len(current_recipe.name)*'+'+'\n')
+            writeOut.write(current_recipe.type+'\n')
+            writeOut.write('Servings: '+current_recipe.servings)
+            writeOut.write(' '+'\n')
+            writeOut.write('Ingredients'+'\n')
+            writeOut.write('='*20+'\n')
+            for ingredient in current_recipe.ingredients.values():
+                writeOut.write(str(ingredient)+'\n')
+            writeOut.write(' '+'\n')
+            writeOut.write('Directions'+'\n')
+            writeOut.write('='*20+'\n')
+            i=1
+            for direction in self.current_recipe.directions:
+                writeOut.write(str(i) +') '+ str(direction)+'\n')
+                i+=1
+            writeOut.close()
+
+            call(['open', filename])
+
 
 class AddPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        self.label = tk.Label(self, text='Recipe Bulder', font=TITLE_FONT)
+        self.label = tk.Label(self, text='Recipe Builder', font=TITLE_FONT)
         self.label.grid(row = 0, column = 1, columnspan=2)
         button = tk.Button(self, text="Go to the Recipes Page", font = OTHER_FONT, command=lambda: controller.show_frame("Contents"))
         button.grid(row = 1, column = 1,columnspan= 2)
@@ -165,13 +220,17 @@ class AddPage(tk.Frame):
         self.en_name.grid(row=3, column=1, columnspan=2)
 
         self.lbl_type=tk.Label(self, text='Type', font = OTHER_FONT,)
+        self.lbl_serving=tk.Label(self,text='Servings', font=OTHER_FONT)
         self.addRecipe = tk.StringVar(self)
         self.addRecipe.set("Misc.") #initialvalue
         self.drp_addRecipe = tk.OptionMenu(self, self.addRecipe,"Appetizer", "Entree", "Dessert", "Misc.")
         self.drp_addRecipe.config(font = OTHER_FONT)
         self.drp_addRecipe['menu'].config(font = OTHER_FONT)
-        self.lbl_type.grid(row=4, column=1, columnspan=2)
-        self.drp_addRecipe.grid(row =5, column = 1, columnspan=2)
+        self.en_servings = tk.Entry(self, font=OTHER_FONT)
+        self.lbl_type.grid(row=4, column=0)
+        self.lbl_serving.grid(row=4, column=3)
+        self.drp_addRecipe.grid(row =5, column = 0)
+        self.en_servings.grid(row=5, column=3)
 
         #bring up recipe TopLevel
         self.btn_Create_Recipe = tk.Button(self, text='Create Recipe', font = OTHER_FONT, command=lambda: self.addNewRecipe())
@@ -213,6 +272,7 @@ class AddPage(tk.Frame):
                 lb_recipe.insert('end', self.current_recipe.name)
                 lb_recipe.insert('end', len(self.current_recipe.name)*'+')
                 lb_recipe.insert('end', self.current_recipe.type)
+                lb_recipe.insert('end', 'Servings: '+ self.current_recipe.servings)
                 lb_recipe.insert('end', ' ')
                 lb_recipe.insert('end','Ingredients')
                 lb_recipe.insert('end', '='*20)
@@ -257,7 +317,38 @@ class AddPage(tk.Frame):
             #     self.addNewRecipe()
 
             def print_recipe(current_recipe):
-                pass
+                filename='recipes/'+ currentbook.name +'/'+TYPE_DICT[current_recipe.type]+'/'+current_recipe.name +'.txt'
+                #try to open the file
+                try:
+                    writeOut = open(filename,'w')
+                #create new File Structure
+                except FileNotFoundError:
+                    call(['mkdir', 'recipes/'+currentbook.name])
+                    call(['mkdir', 'recipes/'+currentbook.name+'/appetizers/'])
+                    call(['mkdir', 'recipes/'+currentbook.name+'/entrees/'])
+                    call(['mkdir', 'recipes/'+currentbook.name+'/desserts/'])
+                    call(['mkdir', 'recipes/'+currentbook.name+'/misc/'])
+                    writeOut = open(filename,'w')
+
+                writeOut.write(current_recipe.name+'\n')
+                writeOut.write(len(current_recipe.name)*'+'+'\n')
+                writeOut.write(current_recipe.type+'\n')
+                writeOut.write('Servings: '+current_recipe.servings)
+                writeOut.write(' '+'\n')
+                writeOut.write('Ingredients'+'\n')
+                writeOut.write('='*20+'\n')
+                for ingredient in current_recipe.ingredients.values():
+                    writeOut.write(str(ingredient)+'\n')
+                writeOut.write(' '+'\n')
+                writeOut.write('Directions'+'\n')
+                writeOut.write('='*20+'\n')
+                i=1
+                for direction in self.current_recipe.directions:
+                    writeOut.write(str(i) +') '+ str(direction)+'\n')
+                    i+=1
+                writeOut.close()
+
+                call(['open', filename])
 
             def add_and_close(current_recipe):
                 currentbook.book[TYPE_DICT[self.current_recipe.type]][self.current_recipe.name]=self.current_recipe
@@ -270,7 +361,7 @@ class AddPage(tk.Frame):
             # if contents of name aren't empty
             if len(self.en_name.get()) != 0:
                 #create Recipe
-                self.current_recipe = Recipe(self.en_name.get(), self.addRecipe.get())
+                self.current_recipe = Recipe(self.en_name.get(), self.addRecipe.get(), self.en_servings.get())
                 #remove create recipe button
                 self.btn_Create_Recipe.grid_remove()
 
