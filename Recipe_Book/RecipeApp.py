@@ -12,7 +12,7 @@ OTHER_FONT = ('Courier New', 12)
 #type dictionary to Switch recipe type to Recipebook Dict Keys
 TYPE_DICT = {'Appetizer':'appetizers', 'Entree': 'entrees','Dessert':'desserts', 'Misc.':'misc'}
 
-FILE_NAME = 'RecipeBookShelf'
+FILE_NAME = 'RecipeBookShelf.txt'
 #load recipebooks
 try:
     inFile = open(FILE_NAME,'rb')
@@ -66,11 +66,12 @@ class App(tk.Tk):
         frame.tkraise()
 
     def saveRecipeBooks(self):
+        print("saveRecipeBooks")
         global recipebooks
-        print(recipebooks)
         outFile = open(FILE_NAME, 'wb')
         pickle.dump(recipebooks, outFile)
         outFile.close()
+        messagebox.showinfo('Saved', 'Your Bookshelf has been saved!')
 
 
 class StartPage(tk.Frame):
@@ -78,11 +79,13 @@ class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
+        self.label = tk.Label(self, text = "Your Bookshelf", font=TITLE_FONT)
+        self.label.pack(side='top', fill='x', pady=10)
         self.label = tk.Label(self, text="Select a book", font=TITLE_FONT)
         self.label.pack(side="top", fill="x", pady=10)
 
         button1 = tk.Button(self, text="Create New Recipe Book", font = OTHER_FONT, command=lambda: controller.show_frame("CreateBook"))
-        button2 = tk.Button(self, text="Recipes", font = OTHER_FONT, command=lambda: self.goto_contents())
+        button2 = tk.Button(self, text="Go to Book Contents", font = OTHER_FONT, command=lambda: self.goto_contents())
         button1.pack()
         button2.pack()
 
@@ -260,11 +263,16 @@ class Contents(tk.Frame):
         ingredients =[]
         directions = []
         for ing in soup.findAll('span', itemprop = "ingredients"):
-            ingredients.append(ing.string)
+            ingredients.append(str(ing.string))
         for dirc in soup.findAll('span', {"class" : "recipe-directions__list--item"}):
-            directions.append(dirc.string)
-        directions = filter(None, directions)
-        print(directions)
+            directions.append(str(dirc.string))
+
+
+        ingredients = [x for x in ingredients if x != None]
+        directions = [x for x in directions if x != None]
+        # ingredients= filter(None, ingredients)
+        # directions = filter(None, directions)
+
         #Create new Recipe
         current_recipe=Recipe(title, self.typeVar.get(), servings)
         #add Ingredients
@@ -294,6 +302,7 @@ class Contents(tk.Frame):
             i+=1
 
         print(currentbook)
+        print(current_recipe)
         currentbook.book[TYPE_DICT[current_recipe.type]][current_recipe.name]=current_recipe
 
 
