@@ -82,7 +82,7 @@ class StartPage(tk.Frame):
         self.label.pack(side="top", fill="x", pady=10)
 
         button1 = tk.Button(self, text="Create New Recipe Book", font = OTHER_FONT, command=lambda: controller.show_frame("CreateBook"))
-        button2 = tk.Button(self, text="Recipes", font = OTHER_FONT, command=lambda: controller.show_frame("Contents"))
+        button2 = tk.Button(self, text="Recipes", font = OTHER_FONT, command=lambda: self.goto_contents())
         button1.pack()
         button2.pack()
 
@@ -92,6 +92,13 @@ class StartPage(tk.Frame):
 
         self.btn_getBook = tk.Button(self, text="Select this Book", font = OTHER_FONT, command= self.select_book)
         self.btn_getBook.pack()
+
+    def goto_contents(self):
+        global currentbook
+        if currentbook == None:
+            messagebox.showwarning("Error", "Please Select a Book")
+        else:
+            self.controller.show_frame("Contents")
 
 
     def update_listbox(self):
