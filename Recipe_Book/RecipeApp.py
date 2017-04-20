@@ -173,13 +173,20 @@ class Contents(tk.Frame):
 
         #calls AddPage
         self.bt_print = tk.Button(self, text='Print selected Recipe', font= OTHER_FONT, command = lambda: self.print_recipe(currentbook.book[self.category][self.lb_section.get('active')]))
-        self.bt_add = tk.Button(self, text ='Add a Recipe', font = OTHER_FONT, command = lambda: controller.show_frame("AddPage"))
+        self.bt_add = tk.Button(self, text ='Manually add a Recipe', font = OTHER_FONT, command = lambda: controller.show_frame("AddPage"))
         self.bt_add_by_url = tk.Button(self, text='Add a Recipe by Url link', font = OTHER_FONT, command = lambda: self.add_by_url())
         self.bt_print.grid(row=4, column = 0)
         self.bt_add.grid(row=4, column =1, columnspan= 2)
         self.bt_add_by_url.grid(row=4, column =3)
 
+        #delete recipe
+        self.bt_delete = tk.Button(self, text = '*Delete Selected Recipe*', font=OTHER_FONT, fg='red', command = lambda: self.deleteRecipe(currentbook.book[self.category][self.lb_section.get('active')]))
+        self.bt_delete.grid(row=5, column=1, columnspan=2)
 
+    def deleteRecipe(self, recipe_to_delete):
+        del currentbook.book[TYPE_DICT[recipe_to_delete.type]][recipe_to_delete.name]
+        messagebox.showinfo('Deleted', recipe_to_delete.name +' has been deleted!')
+        self.update_listbox(TYPE_DICT[recipe_to_delete.type])
 
     def update_listbox(self, *category):
         self.lb_section.delete(0, 'end')
@@ -269,8 +276,8 @@ class Contents(tk.Frame):
             directions.append(str(dirc.string))
 
 
-        ingredients = [x for x in ingredients if x != None]
-        directions = [x for x in directions if x != None]
+        ingredients = [x for x in ingredients if x != 'None']
+        directions = [x for x in directions if x != 'None']
         # ingredients= filter(None, ingredients)
         # directions = filter(None, directions)
 
