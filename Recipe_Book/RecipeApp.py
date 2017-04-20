@@ -106,6 +106,7 @@ class StartPage(tk.Frame):
 
     def update_listbox(self):
         self.lb_book.delete(0,'end')
+        recipebooks.sort(key=lambda x: x.name)
         for item in recipebooks:
             self.lb_book.insert('end', item.name)
 
@@ -187,7 +188,7 @@ class Contents(tk.Frame):
             category = category[0]
             self.category=category
             if(currentbook.book[category]):
-                for item in currentbook.book[category]:
+                for item in sorted(currentbook.book[category]):
                     self.lb_section.insert('end', item)
         else:
             pass
