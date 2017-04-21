@@ -8,7 +8,8 @@ import requests
 from bs4 import BeautifulSoup
 
 TITLE_FONT = ("Courier New", 18, "bold")
-OTHER_FONT = ('Courier New', 12)
+SUBTITLE_FONT =("Courier New", 15, "bold")
+APP_FONT = ('Courier New', 12)
 #type dictionary to Switch recipe type to Recipebook Dict Keys
 TYPE_DICT = {'Appetizer':'appetizers', 'Entree': 'entrees','Dessert':'desserts', 'Misc.':'misc'}
 
@@ -53,8 +54,8 @@ class App(tk.Tk):
 
         self.show_frame("StartPage")
 
-        btn_save =tk.Button(self, text='Save', command = lambda: self.saveRecipeBooks(), font=OTHER_FONT)
-        btn_exit = tk.Button(self, text = "Exit", fg = "black", bg = "white", command = exit, font=OTHER_FONT)
+        btn_save =tk.Button(self, text='Save', command = lambda: self.saveRecipeBooks(), font=APP_FONT)
+        btn_exit = tk.Button(self, text = "Exit", fg = "black", bg = "white", command = exit, font=APP_FONT)
         btn_save.pack()
         btn_exit.pack()
 
@@ -79,21 +80,23 @@ class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        self.label = tk.Label(self, text = "Your Bookshelf", font=TITLE_FONT)
-        self.label.pack(side='top', fill='x', pady=10)
-        self.label = tk.Label(self, text="Select a book", font=TITLE_FONT)
-        self.label.pack(side="top", fill="x", pady=10)
+        self.title = tk.Label(self, text = "Your Bookshelf", font=TITLE_FONT)
+        self.title.pack(side='top', fill='x', pady=10)
+        self.select = tk.Label(self, text="Select a book", font=SUBTITLE_FONT)
+        self.select.pack(side="top", fill="x")
+        self.book = tk.Label(self, text="", font=SUBTITLE_FONT)
+        self.book.pack(side="top", fill="x")
 
-        button1 = tk.Button(self, text="Create New Recipe Book", font = OTHER_FONT, command=lambda: controller.show_frame("CreateBook"))
-        button2 = tk.Button(self, text="Go to Book Contents", font = OTHER_FONT, command=lambda: self.goto_contents())
+        button1 = tk.Button(self, text="Create New Recipe Book", font = APP_FONT, command=lambda: controller.show_frame("CreateBook"))
+        button2 = tk.Button(self, text="Go to Book Contents", font = APP_FONT, command=lambda: self.goto_contents())
         button1.pack()
         button2.pack()
 
         self.lb_book = tk.Listbox(self)
-        self.lb_book.config(width = 40, height =20, font = OTHER_FONT)
+        self.lb_book.config(width = 40, height =20, font = APP_FONT)
         self.lb_book.pack()
 
-        self.btn_getBook = tk.Button(self, text="Select this Book", font = OTHER_FONT, command= self.select_book)
+        self.btn_getBook = tk.Button(self, text="Select this Book", font = APP_FONT, command= self.select_book)
         self.btn_getBook.pack()
 
     def goto_contents(self):
@@ -113,7 +116,8 @@ class StartPage(tk.Frame):
     def select_book(self):
         global currentbook
         currentbook = recipebooks[self.lb_book.curselection()[0]]
-        self.label.config(text= 'Current Recipe Book: ' + currentbook.name)
+        self.select.config(text= 'Current Recipe Book:')
+        self.book.config(text= currentbook.name)
 
 
 class CreateBook(tk.Frame):
@@ -123,16 +127,16 @@ class CreateBook(tk.Frame):
         self.controller = controller
         label = tk.Label(self, text="Create a new Recipe Book", font=TITLE_FONT)
         label.pack(side="top", fill="x", pady=10)
-        button = tk.Button(self, text="Go to the select a Book  page", font = OTHER_FONT, command=lambda: controller.show_frame("StartPage"))
+        button = tk.Button(self, text="Go to the select a Book  page", font = APP_FONT, command=lambda: controller.show_frame("StartPage"))
         button.pack()
 
-        create_book_label = tk.Label(self, text= "Recipe Book Name:", font = OTHER_FONT,)
+        create_book_label = tk.Label(self, text= "Recipe Book Name:", font = APP_FONT,)
         create_book_label.pack()
 
-        self.create_book_entry = tk.Entry(self, width = 20, font = OTHER_FONT)
+        self.create_book_entry = tk.Entry(self, width = 20, font = APP_FONT)
         self.create_book_entry.pack()
 
-        create_book_submit = tk.Button(self, text = "Submit",  font = OTHER_FONT, command = self.createBook)
+        create_book_submit = tk.Button(self, text = "Submit",  font = APP_FONT, command = self.createBook)
         create_book_submit.pack()
 
     def createBook(self):
@@ -142,6 +146,7 @@ class CreateBook(tk.Frame):
             print(recipebooks)
         else:
             messagebox.showwarning("Error", "Please Enter a Value for a Recipe Book Name")
+
     def update_listbox(self):
         pass
 
@@ -154,13 +159,13 @@ class Contents(tk.Frame):
         self.category=''
         self.label = tk.Label(self, text='Recipes', font=TITLE_FONT)
         self.label.grid(row = 0, column = 1, columnspan=2)
-        button = tk.Button(self, text="Go to the select a Book page",  font = OTHER_FONT, command=lambda: controller.show_frame("StartPage"))
+        button = tk.Button(self, text="Go to the select a Book page",  font = APP_FONT, command=lambda: controller.show_frame("StartPage"))
         button.grid(row = 1, column = 1,columnspan= 2)
 
-        self.bt_app = tk.Button(self, text= 'Appetizers', font = OTHER_FONT, command = lambda: self.update_listbox('appetizers'))
-        self.bt_ent = tk.Button(self, text='Entrees', font = OTHER_FONT, command = lambda: self.update_listbox('entrees'))
-        self.bt_des = tk.Button(self, text='Desserts', font = OTHER_FONT, command = lambda: self.update_listbox('desserts'))
-        self.bt_mis = tk.Button(self, text='Misc', font = OTHER_FONT, command = lambda: self.update_listbox('misc'))
+        self.bt_app = tk.Button(self, text= 'Appetizers', font = APP_FONT, command = lambda: self.update_listbox('appetizers'))
+        self.bt_ent = tk.Button(self, text='Entrees', font = APP_FONT, command = lambda: self.update_listbox('entrees'))
+        self.bt_des = tk.Button(self, text='Desserts', font = APP_FONT, command = lambda: self.update_listbox('desserts'))
+        self.bt_mis = tk.Button(self, text='Misc', font = APP_FONT, command = lambda: self.update_listbox('misc'))
         self.bt_app.grid(row = 2, column = 0)
         self.bt_ent.grid(row = 2, column = 1)
         self.bt_des.grid(row = 2, column = 2)
@@ -168,19 +173,19 @@ class Contents(tk.Frame):
 
         #listbox
         self.lb_section = tk.Listbox(self)
-        self.lb_section.config(width = 60, height = 20, font = OTHER_FONT)
+        self.lb_section.config(width = 60, height = 20, font = APP_FONT)
         self.lb_section.grid(row=3, column=0, columnspan=4, padx = 20)
 
         #calls AddPage
-        self.bt_print = tk.Button(self, text='Print selected Recipe', font= OTHER_FONT, command = lambda: self.print_recipe(currentbook.book[self.category][self.lb_section.get('active')]))
-        self.bt_add = tk.Button(self, text ='Manually add a Recipe', font = OTHER_FONT, command = lambda: controller.show_frame("AddPage"))
-        self.bt_add_by_url = tk.Button(self, text='Add a Recipe by Url link', font = OTHER_FONT, command = lambda: self.add_by_url())
+        self.bt_print = tk.Button(self, text='Print selected Recipe', font= APP_FONT, command = lambda: self.print_recipe(currentbook.book[self.category][self.lb_section.get('active')]))
+        self.bt_add = tk.Button(self, text ='Manually add a Recipe', font = APP_FONT, command = lambda: controller.show_frame("AddPage"))
+        self.bt_add_by_url = tk.Button(self, text='Add a Recipe by Url link', font = APP_FONT, command = lambda: self.add_by_url())
         self.bt_print.grid(row=4, column = 0)
         self.bt_add.grid(row=4, column =1, columnspan= 2)
         self.bt_add_by_url.grid(row=4, column =3)
 
         #delete recipe
-        self.bt_delete = tk.Button(self, text = '*Delete Selected Recipe*', font=OTHER_FONT, fg='red', command = lambda: self.deleteRecipe(currentbook.book[self.category][self.lb_section.get('active')]))
+        self.bt_delete = tk.Button(self, text = '*Delete Selected Recipe*', font=APP_FONT, fg='red', command = lambda: self.deleteRecipe(currentbook.book[self.category][self.lb_section.get('active')]))
         self.bt_delete.grid(row=5, column=1, columnspan=2)
 
     def deleteRecipe(self, recipe_to_delete):
@@ -240,15 +245,15 @@ class Contents(tk.Frame):
         self.pop_url_add.title('Add Recipe by Url')
         self.pop_url_add.geometry("500x600+860+50")
         #buttons/entries/labels
-        lbl_addUrl = tk.Label(self.pop_url_add, text ="Paste Url:", font=OTHER_FONT)
-        self.en_addUrl = tk.Entry(self.pop_url_add, font=OTHER_FONT, width = 50)
+        lbl_addUrl = tk.Label(self.pop_url_add, text ="Paste Url:", font=APP_FONT)
+        self.en_addUrl = tk.Entry(self.pop_url_add, font=APP_FONT, width = 50)
         bt_getUrl = tk.Button(self.pop_url_add, text = 'Get Recipe', command = lambda: self.scrapeRecipe(self.en_addUrl.get()))
         self.typeVar = tk.StringVar(self)
         self.typeVar.set("Misc.") #initialvalue
         drp_type = tk.OptionMenu(self.pop_url_add, self.typeVar,"Appetizer", "Entree", "Dessert", "Misc.")
-        drp_type.config(font = OTHER_FONT)
-        drp_type['menu'].config(font = OTHER_FONT)
-        lbl_type = tk.Label(self.pop_url_add, text = "This recipe is a:", font=OTHER_FONT)
+        drp_type.config(font = APP_FONT)
+        drp_type['menu'].config(font = APP_FONT)
+        lbl_type = tk.Label(self.pop_url_add, text = "This recipe is a:", font=APP_FONT)
         #Grid
         lbl_addUrl.grid(row=0, column=0)
         self.en_addUrl.grid(row=0, column=1, columnspan=2, padx=(0,5))
@@ -258,7 +263,7 @@ class Contents(tk.Frame):
 
         #listbox
         self.lb_recipe = tk.Listbox(self.pop_url_add)
-        self.lb_recipe.config(height=35, width=70, font = OTHER_FONT)
+        self.lb_recipe.config(height=35, width=70, font = APP_FONT)
         self.lb_recipe.grid(row=2, column=0, columnspan=3, padx=5, pady=(10,5))
 
     def scrapeRecipe(self, recipeUrl):
@@ -343,29 +348,29 @@ class AddPage(tk.Frame):
         self.controller = controller
         self.label = tk.Label(self, text='Recipe Builder', font=TITLE_FONT)
         self.label.grid(row = 0, column = 1, columnspan=2)
-        button = tk.Button(self, text="Go to the Recipes Page", font = OTHER_FONT, command=lambda: controller.show_frame("Contents"))
+        button = tk.Button(self, text="Go to the Recipes Page", font = APP_FONT, command=lambda: controller.show_frame("Contents"))
         button.grid(row = 1, column = 1,columnspan= 2)
         #recipe name
-        self.lbl_name = tk.Label(self, text='Recipe Name', font = OTHER_FONT,)
+        self.lbl_name = tk.Label(self, text='Recipe Name', font = APP_FONT,)
         self.lbl_name.grid(row=2, column =1, columnspan=2, pady=(25,5))
-        self.en_name = tk.Entry(self, font = OTHER_FONT)
+        self.en_name = tk.Entry(self, font = APP_FONT)
         self.en_name.grid(row=3, column=1, columnspan=2)
 
-        self.lbl_type=tk.Label(self, text='Type', font = OTHER_FONT,)
-        self.lbl_serving=tk.Label(self,text='Servings', font=OTHER_FONT)
+        self.lbl_type=tk.Label(self, text='Type', font = APP_FONT,)
+        self.lbl_serving=tk.Label(self,text='Servings', font=APP_FONT)
         self.addRecipe = tk.StringVar(self)
         self.addRecipe.set("Misc.") #initialvalue
         self.drp_addRecipe = tk.OptionMenu(self, self.addRecipe,"Appetizer", "Entree", "Dessert", "Misc.")
-        self.drp_addRecipe.config(font = OTHER_FONT)
-        self.drp_addRecipe['menu'].config(font = OTHER_FONT)
-        self.en_servings = tk.Entry(self, font=OTHER_FONT)
+        self.drp_addRecipe.config(font = APP_FONT)
+        self.drp_addRecipe['menu'].config(font = APP_FONT)
+        self.en_servings = tk.Entry(self, font=APP_FONT)
         self.lbl_type.grid(row=4, column=0)
         self.lbl_serving.grid(row=4, column=3)
         self.drp_addRecipe.grid(row =5, column = 0)
         self.en_servings.grid(row=5, column=3)
 
         #bring up recipe TopLevel
-        self.btn_Create_Recipe = tk.Button(self, text='Create Recipe', font = OTHER_FONT, command=lambda: self.addNewRecipe())
+        self.btn_Create_Recipe = tk.Button(self, text='Create Recipe', font = APP_FONT, command=lambda: self.addNewRecipe())
         self.btn_Create_Recipe.grid(row=6, column=1, columnspan=2)
 
     def resetAll(self):
@@ -498,46 +503,46 @@ class AddPage(tk.Frame):
                 self.pop_recipe.title(self.en_name.get())
                 self.pop_recipe.geometry("500x600+860+50")
                 lb_recipe = tk.Listbox(self.pop_recipe)
-                lb_recipe.config(height=36, width=70, font = OTHER_FONT)
+                lb_recipe.config(height=36, width=70, font = APP_FONT)
                 lb_recipe.grid(row=0, column=0, columnspan=4, padx=5, pady=(10,5))
-                bt_pop_print = tk.Button(self.pop_recipe, text = 'Print this recipe', font = OTHER_FONT, command = lambda: print_recipe(self.current_recipe))
-                bt_pop_close_topLevel = tk.Button(self.pop_recipe, text='add and close this box', font = OTHER_FONT, command= lambda: add_and_close(self.current_recipe))
+                bt_pop_print = tk.Button(self.pop_recipe, text = 'Print this recipe', font = APP_FONT, command = lambda: print_recipe(self.current_recipe))
+                bt_pop_close_topLevel = tk.Button(self.pop_recipe, text='add and close this box', font = APP_FONT, command= lambda: add_and_close(self.current_recipe))
                 bt_pop_print.grid(row=15, column =1)
                 bt_pop_close_topLevel.grid(row=15, column =2)
 
                 #Bring up add recipe stuffs
                 #add ingredients labels
-                self.lbl_ingredient = tk.Label(self, text="Add Ingredient", font = OTHER_FONT)
+                self.lbl_ingredient = tk.Label(self, text="Add Ingredient", font = APP_FONT)
                 self.lbl_ingredient.grid(row=6, column=1, columnspan=2, pady=(20,10))
-                self.lbl_ingredient_amount=tk.Label(self, text="Amount", font = OTHER_FONT)
-                self.lbl_ingredient_measure=tk.Label(self, text='Measure', font = OTHER_FONT)
-                self.lbl_ingredient_name = tk.Label(self, text='Ingredient', font = OTHER_FONT)
+                self.lbl_ingredient_amount=tk.Label(self, text="Amount", font = APP_FONT)
+                self.lbl_ingredient_measure=tk.Label(self, text='Measure', font = APP_FONT)
+                self.lbl_ingredient_name = tk.Label(self, text='Ingredient', font = APP_FONT)
                 self.lbl_ingredient_amount.grid(row=7, column=0)
                 self.lbl_ingredient_measure.grid(row=7, column=1, columnspan=2)
                 self.lbl_ingredient_name.grid(row=7, column =3)
 
                 #add ingredient entries
-                self.en_amount = tk.Entry(self, font = OTHER_FONT)
+                self.en_amount = tk.Entry(self, font = APP_FONT)
                 self.addMeasure = tk.StringVar(self)
                 self.addMeasure.set('Each')
                 self.drp_measure = tk.OptionMenu(self, self.addMeasure, 'Each','teaspoon','Tablespoon', 'Cup', 'Quart', 'Gallon', 'Ounce', 'pound', 'To Taste', 'Dash')
-                self.drp_measure.config(font = OTHER_FONT)
-                self.drp_measure['menu'].config(font = OTHER_FONT)
-                self.en_ingredient_name = tk.Entry(self, font = OTHER_FONT)
+                self.drp_measure.config(font = APP_FONT)
+                self.drp_measure['menu'].config(font = APP_FONT)
+                self.en_ingredient_name = tk.Entry(self, font = APP_FONT)
                 self.en_amount.grid(row=8, column =0)
                 self.drp_measure.grid(row=8, column =1, columnspan=2)
                 self.en_ingredient_name.grid(row=8, column=3)
 
                 #add ingredient button
-                self.bt_add_ingredient = tk.Button(self, text='Add this Ingredient', font = OTHER_FONT, command= lambda: addIngredient(self.current_recipe))
+                self.bt_add_ingredient = tk.Button(self, text='Add this Ingredient', font = APP_FONT, command= lambda: addIngredient(self.current_recipe))
                 self.bt_add_ingredient.grid(row=9, column =1, columnspan=2)
 
                 #add direction
-                self.lbl_add_direction = tk.Label(self, text='Add Direction', font = OTHER_FONT)
+                self.lbl_add_direction = tk.Label(self, text='Add Direction', font = APP_FONT)
                 self.lbl_add_direction.grid(row=11, column=1, columnspan=2, pady=(20, 10))
                 self.txt_add_direction = tk.Text(self, height=4, width = 50, bd=4, bg='#e3eaf4')
                 self.txt_add_direction.grid(row=12, column=0, columnspan=4)
-                self.bt_add_direction=tk.Button(self, text='Add this Direction', font = OTHER_FONT, command= lambda: addDirection(self.current_recipe))
+                self.bt_add_direction=tk.Button(self, text='Add this Direction', font = APP_FONT, command= lambda: addDirection(self.current_recipe))
                 self.bt_add_direction.grid(row=13, column=1, columnspan=2)
             else:
                 messagebox.showwarning("Error", "Please enter a recipe name")
