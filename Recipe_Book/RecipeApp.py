@@ -1,3 +1,10 @@
+'''
+    add shopping lists
+    delete book button
+    
+'''
+
+
 import tkinter as tk   # python3
 from tkinter import messagebox
 from tkinter.ttk import *
