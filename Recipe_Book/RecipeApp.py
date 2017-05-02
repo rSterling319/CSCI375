@@ -2,6 +2,10 @@
     RecipeBookShelf App
     by Richard Sterling
     CSCI375
+
+    Ideas:
+    Edit Recipe
+    Quick Scale recipe
 '''
 
 
