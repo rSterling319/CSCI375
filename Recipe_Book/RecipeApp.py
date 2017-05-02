@@ -1,7 +1,7 @@
 '''
-    add shopping lists
-    delete book button
-
+    RecipeBookShelf App
+    by Richard Sterling
+    CSCI375
 '''
 
 
