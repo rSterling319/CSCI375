@@ -20,7 +20,6 @@ class GroceryList(BookShelfItem):
     def consolidate(self, newItem):
         for index, item in enumerate(self.items):
             if item.name==newItem.name:
-                print(type(item))
                 if type(item) == Ingredient:
                     if item.measure == newItem.measure:
                         self.items[index] = Ingredient(item.name,str(eval(item.amount)+eval(newItem.amount)), item.measure)
@@ -35,7 +34,7 @@ class GroceryList(BookShelfItem):
     def __str__(self):
         return self.name
 
-class Item(GroceryList):
+class Item:
     def __init__(self, name, text=''):
         self.name=name
         self.text=text
@@ -56,7 +55,7 @@ class RecipeBook(BookShelfItem):
         return self.name
 
 
-class Recipe(RecipeBook):
+class Recipe:
     def __init__(self, name, rec_type='misc', servings=4):
         self.name = name
         self.type = rec_type
@@ -73,7 +72,7 @@ class Recipe(RecipeBook):
     def __str__(self):
         return(self.name)
 
-class Ingredient(Recipe):
+class Ingredient:
     def __init__(self, name, amount, measure):
         self.name = name
         self.amount = amount
@@ -83,7 +82,7 @@ class Ingredient(Recipe):
         return ('%s %s %s' %(str(self.amount), self.measure, self.name))
 
 
-class Direction(Recipe):
+class Direction:
     def __init__(self, text):
         self.text = text
 

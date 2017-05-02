@@ -167,11 +167,6 @@ class App(tk.Tk):
                 self.lb_list.insert('end', i)
 
 
-
-
-
-
-
 class BooksPage(tk.Frame):
 
     def __init__(self, parent, controller):
@@ -224,8 +219,6 @@ class BooksPage(tk.Frame):
         if are_You_sure:
             del recipebooks[self.lb_book.curselection()[0]]
             self.update_listbox()
-
-
 
 
 class CreateBook(tk.Frame):
