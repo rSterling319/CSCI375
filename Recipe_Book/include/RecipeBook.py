@@ -1,8 +1,43 @@
+import datetime
 
-
-class RecipeBook:
+class BookShelfItem:
     def __init__(self, name):
         self.name = name
+    def __str__(self):
+        return self.name
+
+class GroceryList(BookShelfItem):
+    def __init__(self, name):
+        BookShelfItem.__init__(self, name + datetime.datetime.now().strftime(" -  %m/%d/%Y"))
+        self.date_created = datetime.datetime.now()
+        self.items = []
+
+    def addItem(self, newItem):
+        self.items.append(newItem)
+        self.consolidate()
+
+    def consolidate(self):
+        for item in self.items:
+            if type(item) == Ingredient:
+                print(item.name)
+
+    #FIXME methods to consolidate items
+
+    def __str__(self):
+        return self.name
+
+class Item(GroceryList):
+    def __init__(self, name, text=''):
+        self.name=name
+        self.text=text
+
+    def __str__(self):
+        return ('%s - %s' %(self.name, self.text))
+
+class RecipeBook(BookShelfItem):
+    def __init__(self, name):
+        BookShelfItem.__init__(self, name)
+        #self.name=name
         self.book = {'appetizers':{}, 'entrees':{}, 'desserts':{}, 'misc':{}}
 
     def add_Recipe(self, recipe):

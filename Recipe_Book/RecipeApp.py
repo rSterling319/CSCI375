@@ -1,15 +1,17 @@
 '''
     add shopping lists
     delete book button
-    
+
 '''
 
 
 import tkinter as tk   # python3
 from tkinter import messagebox
-from tkinter.ttk import *
+#from tkinter.ttk import *
 from subprocess import call
 from include.RecipeBook import *
+
+import datetime
 import pickle
 import requests
 from bs4 import BeautifulSoup
@@ -30,7 +32,7 @@ except FileNotFoundError:
     recipebooks =[]
 
 currentbook = None
-
+current_groceryList = GroceryList('Grocery List')
 
 
 class App(tk.Tk):
@@ -49,7 +51,7 @@ class App(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in (StartPage, CreateBook, Contents, AddPage):
+        for F in (BooksPage, CreateBook, Contents, AddPage):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -59,10 +61,12 @@ class App(tk.Tk):
             # will be the one that is visible.
             frame.grid(row=0, column=0, sticky="nsew")
 
-        self.show_frame("StartPage")
+        self.show_frame("BooksPage")
 
+        btn_groceryList = tk.Button(self, text="Grocery List", font=APP_FONT, command= lambda: self.groceryList())
         btn_save =tk.Button(self, text='Save', command = lambda: self.saveRecipeBooks(), font=APP_FONT)
         btn_exit = tk.Button(self, text = "Exit", fg = "black", bg = "white", command = exit, font=APP_FONT)
+        btn_groceryList.pack()
         btn_save.pack()
         btn_exit.pack()
 
@@ -81,8 +85,89 @@ class App(tk.Tk):
         outFile.close()
         messagebox.showinfo('Saved', 'Your Bookshelf has been saved!')
 
+    def groceryList(self):
+        global current_groceryList
+        self.grocery_list = tk.Toplevel()
+        self.grocery_list.title(current_groceryList)
+        self.grocery_list.geometry("500x600+860+50")
+        self.lb_list = tk.Listbox(self.grocery_list)
+        self.lb_list.config(height=32, width=70, font = APP_FONT)
+        self.lb_list.grid(row=0, column=0, columnspan=4, padx=5, pady=(10,5))
 
-class StartPage(tk.Frame):
+        lbl_item_name = tk.Label(self.grocery_list,text="Item Name",font=APP_FONT)
+        lbl_item_text = tk.Label(self.grocery_list,text="Item Text",font=APP_FONT)
+        self.en_item_name = tk.Entry(self.grocery_list, font = APP_FONT)
+        self.en_item_text = tk.Entry(self.grocery_list, font = APP_FONT)
+        lbl_item_name.grid(row=14, column=0)
+        self.en_item_name.grid(row=14, column=1)
+        lbl_item_text.grid(row=14, column=2)
+        self.en_item_text.grid(row=14, column=3)
+
+        bt_pop_print = tk.Button(self.grocery_list, text = 'Print this list', font = APP_FONT, command = lambda: self.print_grocerylist())
+        bt_pop_add_topLevel = tk.Button(self.grocery_list, text='Add Item', font = APP_FONT, command= lambda: self.addListItem())
+        bt_pop_print.grid(row=15, column =0, columnspan=2)
+        bt_pop_add_topLevel.grid(row=15, column =2, columnspan=2)
+
+        bt_pop_del = tk.Button(self.grocery_list, text='*Delete Item*', fg='red',command=lambda: self.deleteItem())
+        lbl_note = tk.Label(self.grocery_list, text='(If boxes are empty, \nadd selected recipe ingredents)', font=APP_FONT)
+        bt_pop_del.grid(row=16, column=0, columnspan=2)
+        lbl_note.grid(row=16, column=2, columnspan=3, rowspan=2)
+
+    def print_grocerylist(self):
+        global current_groceryList
+        filename='grocerylist/'+ current_groceryList.date_created.strftime("%m_%d_%Y") +'.txt'
+        try:
+            writeOut = open(filename,'w')
+        #create new File Structure
+        except FileNotFoundError:
+            call(['mkdir', 'grocerylist'])
+            writeOut = open(filename,'w')
+
+        writeOut.write(current_groceryList.name+'\n')
+        writeOut.write('='*len(current_groceryList.name)+'\n')
+        for item in current_groceryList.items:
+            if type(item) == Ingredient:
+                writeOut.write("%s (%s %s)\n" %(item.name, item.amount, item.measure))
+            else:
+                writeOut.write(str(item) +'\n')
+
+        call(['open', filename])
+
+    def addListItem(self):
+        global current_groceryList
+        try:
+            if len(self.en_item_name.get())==0:
+                current_recipe = currentbook.book[self.frames['Contents'].category][self.frames['Contents'].lb_section.get('active')]
+                for i in current_recipe.ingredients.values():
+                    current_groceryList.addItem(i)
+            else:
+                current_groceryList.addItem(Item(self.en_item_name.get(), self.en_item_text.get()))
+                self.en_item_name.delete(0,'end')
+                self.en_item_text.delete(0,'end')
+
+            self.updateGroceryList()
+        except AttributeError:
+            messagebox.showwarning("Error", "Nothing to add.")
+
+
+    def updateGroceryList(self):
+        global current_groceryList
+        self.lb_list.delete(0, 'end')
+        self.lb_list.insert('end', current_groceryList.name)
+        self.lb_list.insert('end',"="*len(current_groceryList.name)+'\n')
+        for i in current_groceryList.items:
+            if type(i) == Ingredient:
+                self.lb_list.insert('end', "%s (%s %s)" %(i.name, i.amount, i.measure))
+            else:
+                self.lb_list.insert('end', i)
+
+
+
+
+
+
+
+class BooksPage(tk.Frame):
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -106,6 +191,9 @@ class StartPage(tk.Frame):
         self.btn_getBook = tk.Button(self, text="Select this Book", font = APP_FONT, command= self.select_book)
         self.btn_getBook.pack()
 
+        self.btn_deleteBook = tk.Button(self, text ="*Delete this Book*",fg='red', command=self.delete_book)
+        self.btn_deleteBook.pack()
+
     def goto_contents(self):
         global currentbook
         if currentbook == None:
@@ -126,6 +214,14 @@ class StartPage(tk.Frame):
         self.select.config(text= 'Current Recipe Book:')
         self.book.config(text= currentbook.name)
 
+    def delete_book(self):
+        are_You_sure = messagebox.askyesno("Delete!?", "Are you sure you want to delete %s" %(self.lb_book.curselection()[0]))
+        if are_You_sure:
+            del recipebooks[self.lb_book.curselection()[0]]
+            self.update_listbox()
+
+
+
 
 class CreateBook(tk.Frame):
 
@@ -134,7 +230,7 @@ class CreateBook(tk.Frame):
         self.controller = controller
         label = tk.Label(self, text="Create a new Recipe Book", font=TITLE_FONT)
         label.pack(side="top", fill="x", pady=10)
-        button = tk.Button(self, text="Go to the select a Book  page", font = APP_FONT, command=lambda: controller.show_frame("StartPage"))
+        button = tk.Button(self, text="Go to the select a Book  page", font = APP_FONT, command=lambda: controller.show_frame("BooksPage"))
         button.pack()
 
         create_book_label = tk.Label(self, text= "Recipe Book Name:", font = APP_FONT,)
@@ -166,7 +262,7 @@ class Contents(tk.Frame):
         self.category=''
         self.label = tk.Label(self, text='Recipes', font=TITLE_FONT)
         self.label.grid(row = 0, column = 1, columnspan=2)
-        button = tk.Button(self, text="Go to the select a Book page",  font = APP_FONT, command=lambda: controller.show_frame("StartPage"))
+        button = tk.Button(self, text="Go to the select a Book page",  font = APP_FONT, command=lambda: controller.show_frame("BooksPage"))
         button.grid(row = 1, column = 1,columnspan= 2)
 
         self.bt_app = tk.Button(self, text= 'Appetizers', font = APP_FONT, command = lambda: self.update_listbox('appetizers'))
@@ -344,11 +440,6 @@ class Contents(tk.Frame):
         return ingredients, amount, measure
 
 
-
-
-
-
-
 class AddPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -371,9 +462,9 @@ class AddPage(tk.Frame):
         self.drp_addRecipe.config(font = APP_FONT)
         self.drp_addRecipe['menu'].config(font = APP_FONT)
         self.en_servings = tk.Entry(self, font=APP_FONT)
-        self.lbl_type.grid(row=4, column=0)
+        self.lbl_type.grid(row=4, column=0, padx=(20,0))
         self.lbl_serving.grid(row=4, column=3)
-        self.drp_addRecipe.grid(row =5, column = 0)
+        self.drp_addRecipe.grid(row =5, column = 0, padx=(20,0))
         self.en_servings.grid(row=5, column=3)
 
         #bring up recipe TopLevel
@@ -557,7 +648,7 @@ class AddPage(tk.Frame):
         else:
             yesNo=messagebox.askyesno("Error", "Please select a Recipe Book First\nWould you like to select one now?")
             if yesNo:
-                self.controller.show_frame("StartPage")
+                self.controller.show_frame("BooksPage")
 
     def update_listbox(self):
         pass
