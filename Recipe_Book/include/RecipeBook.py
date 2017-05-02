@@ -13,16 +13,24 @@ class GroceryList(BookShelfItem):
         self.items = []
 
     def addItem(self, newItem):
-        self.items.append(newItem)
-        self.consolidate()
+        consolidated = self.consolidate(newItem)
+        if not consolidated:
+            self.items.append(newItem)
 
-    def consolidate(self):
-        pass
-        # for item in self.items:
-        #     if type(item) == Ingredient:
-        #         print(item.name)
+    def consolidate(self, newItem):
+        for index, item in enumerate(self.items):
+            if item.name==newItem.name:
+                print(type(item))
+                if type(item) == Ingredient:
+                    if item.measure == newItem.measure:
+                        self.items[index] = Ingredient(item.name,str(eval(item.amount)+eval(newItem.amount)), item.measure)
+                        return True
+                    else:
+                        #FIXME do unit conversion
+                        return False
+                else:
+                    return False
 
-    #FIXME methods to consolidate items
 
     def __str__(self):
         return self.name

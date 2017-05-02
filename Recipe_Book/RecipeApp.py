@@ -41,9 +41,7 @@ class App(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
         self.title("Recipe Book")
         self.geometry("600x600+250+50")
-        # the container is where we'll stack a bunch of frames
-        # on top of each other, then the one we want visible
-        # will be raised above the others
+        # the container stacks a bunch of frames
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
         container.config(width=400, height=400)
@@ -55,7 +53,6 @@ class App(tk.Tk):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
-
             # put all of the pages in the same location;
             # the one on the top of the stacking order
             # will be the one that is visible.
