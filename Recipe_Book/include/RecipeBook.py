@@ -17,9 +17,10 @@ class GroceryList(BookShelfItem):
         self.consolidate()
 
     def consolidate(self):
-        for item in self.items:
-            if type(item) == Ingredient:
-                print(item.name)
+        pass
+        # for item in self.items:
+        #     if type(item) == Ingredient:
+        #         print(item.name)
 
     #FIXME methods to consolidate items
 

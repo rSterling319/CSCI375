@@ -130,7 +130,7 @@ class App(tk.Tk):
                 writeOut.write("%s (%s %s)\n" %(item.name, item.amount, item.measure))
             else:
                 writeOut.write(str(item) +'\n')
-
+        writeOut.close()
         call(['open', filename])
 
     def addListItem(self):
