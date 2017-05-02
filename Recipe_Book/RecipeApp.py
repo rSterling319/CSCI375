@@ -149,6 +149,9 @@ class App(tk.Tk):
         except AttributeError:
             messagebox.showwarning("Error", "Nothing to add.")
 
+    def deleteItem(self):
+        pass
+
 
     def updateGroceryList(self):
         global current_groceryList
