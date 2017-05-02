@@ -113,6 +113,8 @@ class App(tk.Tk):
         bt_pop_del.grid(row=16, column=0, columnspan=2)
         lbl_note.grid(row=16, column=2, columnspan=3, rowspan=2)
 
+        self.updateGroceryList()
+
     def print_grocerylist(self):
         global current_groceryList
         filename='grocerylist/'+ current_groceryList.date_created.strftime("%m_%d_%Y") +'.txt'
@@ -150,8 +152,11 @@ class App(tk.Tk):
             messagebox.showwarning("Error", "Nothing to add.")
 
     def deleteItem(self):
-        pass
-
+        global current_groceryList
+        # subtract 2 to account for header of listbox (name, and line)
+        to_del = self.lb_list.curselection()[0]-2
+        del current_groceryList.items[to_del]
+        self. updateGroceryList()
 
     def updateGroceryList(self):
         global current_groceryList
