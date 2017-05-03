@@ -6,6 +6,7 @@
     Ideas:
     Edit Recipe
     Quick Scale recipe
+    Filter recipe scrape when there is something like 4 (4 ounce)
 '''
 
 
@@ -423,7 +424,7 @@ class Contents(tk.Frame):
         print(current_recipe)
         currentbook.book[TYPE_DICT[current_recipe.type]][current_recipe.name]=current_recipe
 
-
+    #FIXME Make ingredient not have a measure when something like 4 (4 ounce) something --(4 ounce) would be part of the name
     def ingredient_a_fy(self, ingredient):
         measures = ('Each','teaspoon','Tablespoon', 'Cup', 'Quart', 'Gallon', 'Ounce', 'pound', 'To Taste', 'Dash')
         ingredients = ingredient.split()
